@@ -3,6 +3,7 @@ import React from "react";
 import { TextInput, TextArea } from "./input/text";
 import Checkbox from "./input/checkbox";
 import Select from "./input/select";
+import { AutoComplete } from "./input/auto-complete";
 import PanelListEdit from "./panel-list-edit";
 import PanelTalentEdit from "./panel-talent-edit";
 import PanelWeaponEdit from "./panel-weapon-edit";
@@ -251,6 +252,8 @@ export default class CharacterEdit extends React.Component {
 	}
 
 	render() {
+		// TODO seems to be an issue with custom skills - when you add one it gets inserted in the correct place but form values are based on index
+
 		let character = this.state.character;
 
 		if(!character) {
@@ -268,6 +271,28 @@ export default class CharacterEdit extends React.Component {
 			return this.props.talents.filter(t => t.type == key).filter(t => noRanks.indexOf(t.name) == -1).sort(sortByProperty("name"));
 		});
 		let weapons = this.props.weapons.all().sort(sortByProperty("name"));
+
+		let tags = {
+			other: []
+		};
+
+		// remove some tags to be handled separately
+		let exclude = ["file:", "book:", "source:", "adventure:", "starred:", "nemesis", "minion", "rival"]
+
+		this.props.tags.sort().filter(f => exclude.filter(ex => f.startsWith(ex)).length == 0).forEach(t => {
+			if(t.indexOf(":") == -1) {
+				tags.other.push(t);
+			}
+			else {
+				let [key, value] = t.split(":");
+
+				tags[key] = tags[key] || [];
+				tags[key].push(value);
+			}
+		});
+console.log(tags)
+		let tagComponents = Object.keys(tags).map(t => <AutoComplete label={ sentenceCase(t) } value="" values={ tags[t] } handler={ this.setTags.bind(this) } />);
+
 
 		return <div id="edit">
 			<h1>
@@ -321,6 +346,11 @@ export default class CharacterEdit extends React.Component {
 					<h2>Gear</h2>
 					<TextArea label="Gear" value={ character.gear } handler={ this.setValue("gear").bind(this) } />
 					<PanelCode />
+				</div>
+
+				<div className="edit-panel">
+					<h2>Tags</h2>
+					{ tagComponents }
 				</div>
 			</div>
 

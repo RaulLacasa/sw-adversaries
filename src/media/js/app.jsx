@@ -7,12 +7,13 @@ import Tab from "lib/tab";
 import CharacterView from "components/character-view";
 import CharacterEdit from "components/character-edit";
 import LinkList from "components/link-list";
-import { Filter } from "components/input/filter";
+import Filter from "components/input/filter";
 import Loader from "components/loader";
 import Tabs from "components/tabs";
 import TagMenu from "components/tag-menu";
 import * as Store from "lib/local-store";
 import { sortByProperty, findByProperty, unique } from "lib/list";
+import { normalise } from "lib/string";
 import * as CONFIG from "lib/config";
 
 
@@ -388,7 +389,7 @@ class App extends React.Component {
 		if(text != "") {
 			text = text.toLowerCase();
 
-			adversaries = adversaries.filter(a => a.name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().indexOf(text) != -1 || a.tags.find(t => t.toLowerCase() == text) != undefined);
+			adversaries = adversaries.filter(a => normalise(a.name).toLowerCase().indexOf(text) != -1 || a.tags.find(t => t.toLowerCase() == text) != undefined);
 		}
 
 		this.setState({ list: adversaries, filter: text });

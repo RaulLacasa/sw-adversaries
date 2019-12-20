@@ -1,6 +1,7 @@
 
 import React from "react";
-import { TextInput, TextArea, AutoComplete } from "./input/text";
+import { TextInput, TextArea } from "./input/text";
+import { AutoComplete } from "./input/auto-complete";
 import Select from "./input/select";
 import PanelCode from "./panel-code";
 import * as CONFIG from "lib/config";
